@@ -333,11 +333,11 @@
     eventListeners,
     callbacks
   };
-  window.wails.SetBindings(window.wailsbindings);
-  delete window.wails.SetBindings;
-  if (true) {
-    delete window.wailsbindings;
-  }
+  // window.wails.SetBindings(window.wailsbindings);
+  // delete window.wails.SetBindings;
+  // if (true) {
+  //   delete window.wailsbindings;
+  // }
   window.addEventListener("mousedown", (e) => {
     let currentElement = e.target;
     while (currentElement != null) {
