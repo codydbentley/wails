@@ -4,16 +4,18 @@
 package appng
 
 import (
+	"bytes"
+	"os"
+	"path/filepath"
+
 	"github.com/leaanthony/gosod"
 	"github.com/wailsapp/wails/v2/internal/binding"
-	wailsRuntime "github.com/wailsapp/wails/v2/internal/frontend/runtime"
+	"github.com/wailsapp/wails/v2/internal/frontend/runtime"
 	"github.com/wailsapp/wails/v2/internal/frontend/runtime/wrapper"
 	"github.com/wailsapp/wails/v2/internal/fs"
 	"github.com/wailsapp/wails/v2/internal/logger"
 	"github.com/wailsapp/wails/v2/internal/project"
 	"github.com/wailsapp/wails/v2/pkg/options"
-	"os"
-	"path/filepath"
 )
 
 // App defines a Wails application structure
@@ -69,16 +71,31 @@ func generateBindings(bindings *binding.Bindings) error {
 		return err
 	}
 
-	//ipcdev.js
-	err = os.WriteFile(filepath.Join(wrapperDir, "ipcdev.js"), wailsRuntime.DesktopIPC, 0755)
+	bindingsJSON, err := bindings.ToJSON()
 	if err != nil {
 		return err
 	}
-	//runtimedev.js
-	err = os.WriteFile(filepath.Join(wrapperDir, "runtimedev.js"), wailsRuntime.RuntimeDesktopJS, 0755)
+
+	var buffer bytes.Buffer
+	buffer.WriteString(`export const bindings ='` + bindingsJSON + `';` + "\n")
+	buffer.Write(runtime.DriverWebJS)
+
+	//webdriver.js
+	err = os.WriteFile(filepath.Join(wrapperDir, "webdriver.js"), buffer.Bytes(), 0755)
 	if err != nil {
 		return err
 	}
+
+	////ipcdev.js
+	//err = os.WriteFile(filepath.Join(wrapperDir, "ipcdev.js"), wailsRuntime.DesktopIPC, 0755)
+	//if err != nil {
+	//	return err
+	//}
+	////runtimedev.js
+	//err = os.WriteFile(filepath.Join(wrapperDir, "runtimedev.js"), wailsRuntime.RuntimeDesktopJS, 0755)
+	//if err != nil {
+	//	return err
+	//}
 
 	targetDir := filepath.Join(projectConfig.WailsJSDir, "wailsjs", "go")
 	err = os.RemoveAll(targetDir)

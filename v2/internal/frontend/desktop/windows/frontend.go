@@ -13,6 +13,8 @@ import (
 	"strings"
 	"text/template"
 
+	wailsRuntime "github.com/wailsapp/wails/v2/internal/frontend/runtime"
+
 	"github.com/leaanthony/slicer"
 
 	"github.com/leaanthony/go-webview2/pkg/edge"
@@ -315,6 +317,17 @@ func (f *Frontend) setupChromium() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	bindingsJSON, err := f.bindings.ToJSON()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Attach bindings, IPC, and Runtime to the VM
+	f.mainWindow.Dispatch(func() {
+		f.chromium.Init("window.wailsbindings = JSON.stringify(" + bindingsJSON + ");")
+		f.chromium.Init(string(wailsRuntime.DriverDesktopJS))
+	})
 
 	// Set background colour
 	f.WindowSetRGBA(f.frontendOptions.RGBA)

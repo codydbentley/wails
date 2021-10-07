@@ -4,10 +4,10 @@
 package assetserver
 
 import (
-	"bytes"
-	"github.com/wailsapp/wails/v2/internal/frontend/runtime"
-	"github.com/wailsapp/wails/v2/pkg/options"
+	"os"
 	"path/filepath"
+
+	"github.com/wailsapp/wails/v2/pkg/options"
 )
 
 /*
@@ -16,10 +16,6 @@ The assetserver for dev serves assets from disk.
 It injects a websocket based IPC script into `index.html`.
 
 */
-
-import (
-	"os"
-)
 
 type BrowserAssetServer struct {
 	runtimeJS  []byte
@@ -33,10 +29,10 @@ func NewBrowserAssetServer(assetdir string, bindingsJSON string, appOptions *opt
 		appOptions: appOptions,
 	}
 
-	var buffer bytes.Buffer
-	buffer.WriteString(`window.wailsbindings='` + bindingsJSON + `';` + "\n")
-	buffer.Write(runtime.RuntimeDesktopJS)
-	result.runtimeJS = buffer.Bytes()
+	//var buffer bytes.Buffer
+	//buffer.WriteString(`window.wailsbindings='` + bindingsJSON + `';` + "\n")
+	//buffer.Write(runtime.RuntimeDesktopJS)
+	//result.runtimeJS = buffer.Bytes()
 	return result, nil
 }
 
@@ -53,22 +49,22 @@ func (a *BrowserAssetServer) processIndexHTML() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	wailsOptions, err := extractOptions(indexHTML)
-	if err != nil {
-		return nil, err
-	}
-	if wailsOptions.disableRuntimeInjection == false {
-		indexHTML, err = injectHTML(string(indexHTML), `<script src="/wails/runtime.js"></script>`)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if wailsOptions.disableIPCInjection == false {
-		indexHTML, err = injectHTML(string(indexHTML), `<script src="/wails/ipc.js"></script>`)
-		if err != nil {
-			return nil, err
-		}
-	}
+	//wailsOptions, err := extractOptions(indexHTML)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//if wailsOptions.disableRuntimeInjection == false {
+	//	indexHTML, err = injectHTML(string(indexHTML), `<script src="/wails/runtime.js"></script>`)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//}
+	//if wailsOptions.disableIPCInjection == false {
+	//	indexHTML, err = injectHTML(string(indexHTML), `<script src="/wails/ipc.js"></script>`)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//}
 	return indexHTML, nil
 }
 
@@ -78,10 +74,10 @@ func (a *BrowserAssetServer) Load(filename string) ([]byte, string, error) {
 	switch filename {
 	case "/":
 		content, err = a.processIndexHTML()
-	case "/wails/runtime.js":
-		content = a.runtimeJS
-	case "/wails/ipc.js":
-		content = runtime.WebsocketIPC
+	//case "/wails/runtime.js":
+	//	content = a.runtimeJS
+	//case "/wails/ipc.js":
+	//	content = runtime.WebsocketIPC
 	default:
 		content, err = a.loadFileFromDisk(filename)
 	}

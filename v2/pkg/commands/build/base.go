@@ -3,9 +3,6 @@ package build
 import (
 	"bytes"
 	"fmt"
-	"github.com/leaanthony/gosod"
-	wailsRuntime "github.com/wailsapp/wails/v2/internal/frontend/runtime"
-	"github.com/wailsapp/wails/v2/internal/frontend/runtime/wrapper"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -375,24 +372,30 @@ func (b *BaseBuilder) CompileProject(options *Options) error {
 }
 
 func generateRuntimeWrapper(options *Options) error {
-	wrapperDir := filepath.Join(options.WailsJSDir, "wailsjs", "runtime")
-	_ = os.RemoveAll(wrapperDir)
-	extractor := gosod.New(wrapper.RuntimeWrapper)
-	err := extractor.Extract(wrapperDir, nil)
-	if err != nil {
-		return err
-	}
+	//wrapperDir := filepath.Join(options.WailsJSDir, "wailsjs", "runtime")
+	//_ = os.RemoveAll(wrapperDir)
+	//extractor := gosod.New(wrapper.RuntimeWrapper)
+	//err := extractor.Extract(wrapperDir, nil)
+	//if err != nil {
+	//	return err
+	//}
 
-	//ipcdev.js
-	err = os.WriteFile(filepath.Join(wrapperDir, "ipcdev.js"), wailsRuntime.DesktopIPC, 0755)
-	if err != nil {
-		return err
-	}
-	//runtimedev.js
-	err = os.WriteFile(filepath.Join(wrapperDir, "runtimedev.js"), wailsRuntime.RuntimeDesktopJS, 0755)
-	if err != nil {
-		return err
-	}
+	////webdriver.js
+	//err = os.WriteFile(filepath.Join(wrapperDir, "webdriver.js"), wailsRuntime.WebsocketIPC, 0755)
+	//if err != nil {
+	//	return err
+	//}
+
+	////ipcdev.js
+	//err = os.WriteFile(filepath.Join(wrapperDir, "ipcdev.js"), wailsRuntime.DesktopIPC, 0755)
+	//if err != nil {
+	//	return err
+	//}
+	////runtimedev.js
+	//err = os.WriteFile(filepath.Join(wrapperDir, "runtimedev.js"), wailsRuntime.RuntimeDesktopJS, 0755)
+	//if err != nil {
+	//	return err
+	//}
 	return nil
 }
 

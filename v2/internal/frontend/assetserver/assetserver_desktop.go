@@ -1,18 +1,16 @@
 package assetserver
 
 import (
-	"bytes"
 	"context"
 	"embed"
 	"fmt"
-	"github.com/leaanthony/debme"
-	"github.com/leaanthony/slicer"
-	"github.com/wailsapp/wails/v2/internal/frontend/runtime"
-	"github.com/wailsapp/wails/v2/internal/logger"
 	"io/fs"
-	"log"
 	"path/filepath"
 	"strings"
+
+	"github.com/leaanthony/debme"
+	"github.com/leaanthony/slicer"
+	"github.com/wailsapp/wails/v2/internal/logger"
 )
 
 type DesktopAssetServer struct {
@@ -40,10 +38,10 @@ func NewDesktopAssetServer(ctx context.Context, assets embed.FS, bindingsJSON st
 		result.LogDebug("Loading assets from: %s", absdir)
 	}
 
-	var buffer bytes.Buffer
-	buffer.WriteString(`window.wailsbindings='` + bindingsJSON + `';` + "\n")
-	buffer.Write(runtime.RuntimeDesktopJS)
-	result.runtimeJS = buffer.Bytes()
+	//var buffer bytes.Buffer
+	//buffer.WriteString(`window.wailsbindings='` + bindingsJSON + `';` + "\n")
+	//buffer.Write(runtime.RuntimeDesktopJS)
+	//result.runtimeJS = buffer.Bytes()
 	err := result.init(assets)
 	return result, err
 }
@@ -99,54 +97,54 @@ func processAssets(assets embed.FS) (debme.Debme, error) {
 	return debme.FS(assets, path)
 }
 
-func (a *DesktopAssetServer) init(assets embed.FS) error {
+func (d *DesktopAssetServer) init(assets embed.FS) error {
 
 	var err error
-	a.assets, err = processAssets(assets)
+	d.assets, err = processAssets(assets)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (a *DesktopAssetServer) processIndexHTML() ([]byte, error) {
-	indexHTML, err := a.ReadFile("index.html")
+func (d *DesktopAssetServer) processIndexHTML() ([]byte, error) {
+	indexHTML, err := d.ReadFile("index.html")
 	if err != nil {
 		return nil, err
 	}
-	wailsOptions, err := extractOptions(indexHTML)
-	if err != nil {
-		log.Fatal(err)
-		return nil, err
-	}
-	if wailsOptions.disableRuntimeInjection == false {
-		indexHTML, err = injectHTML(string(indexHTML), `<script src="/wails/runtime.js"></script>`)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if wailsOptions.disableIPCInjection == false {
-		indexHTML, err = injectHTML(string(indexHTML), `<script src="/wails/ipc.js"></script>`)
-		if err != nil {
-			return nil, err
-		}
-	}
+	//wailsOptions, err := extractOptions(indexHTML)
+	//if err != nil {
+	//	log.Fatal(err)
+	//	return nil, err
+	//}
+	//if wailsOptions.disableRuntimeInjection == false {
+	//	indexHTML, err = injectHTML(string(indexHTML), `<script src="/wails/runtime.js"></script>`)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//}
+	//if wailsOptions.disableIPCInjection == false {
+	//	indexHTML, err = injectHTML(string(indexHTML), `<script src="/wails/ipc.js"></script>`)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//}
 
 	return indexHTML, nil
 }
 
-func (a *DesktopAssetServer) Load(filename string) ([]byte, string, error) {
+func (d *DesktopAssetServer) Load(filename string) ([]byte, string, error) {
 	var content []byte
 	var err error
 	switch filename {
 	case "/":
-		content, err = a.processIndexHTML()
-	case "/wails/runtime.js":
-		content = a.runtimeJS
-	case "/wails/ipc.js":
-		content = runtime.DesktopIPC
+		content, err = d.processIndexHTML()
+	//case "/wails/runtime.js":
+	//	content = d.runtimeJS
+	//case "/wails/ipc.js":
+	//	content = runtime.DesktopIPC
 	default:
-		content, err = a.ReadFile(filename)
+		content, err = d.ReadFile(filename)
 	}
 	if err != nil {
 		return nil, "", err

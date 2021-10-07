@@ -2,6 +2,6 @@
 
 package assetserver
 
-func (a *DesktopAssetServer) ReadFile(filename string) ([]byte, error) {
-	return a.assets.ReadFile(filename)
+func (d *DesktopAssetServer) ReadFile(filename string) ([]byte, error) {
+	return d.assets.ReadFile(filename)
 }

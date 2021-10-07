@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-func (a *DesktopAssetServer) ReadFile(filename string) ([]byte, error) {
-	a.LogDebug("Loading file from disk: %s", filename)
-	return os.ReadFile(filepath.Join(a.assetdir, filename))
+func (d *DesktopAssetServer) ReadFile(filename string) ([]byte, error) {
+	d.LogDebug("Loading file from disk: %s", filename)
+	return os.ReadFile(filepath.Join(d.assetdir, filename))
 }
